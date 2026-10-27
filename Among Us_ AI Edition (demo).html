@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Among Us: AI Edition</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lilita+One&family=Nunito:wght@500;700;800&display=swap">
+<style>
+:root{--bg:#eef1fb;--card:#fff;--text:#161a33;--muted:#59608a;--line:#d6dbf0;--red:#d62839;--cyan:#16a5c9;--ok:#1b9a5f;--amber:#d18a0b;--shadow:#00000014;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0c0f24;--card:#161b3a;--text:#eef0ff;--muted:#9ba3d1;--line:#2a3160;--red:#ff4d5e;--cyan:#5be3ff;--ok:#43d68f;--amber:#ffc24a;--shadow:#00000066}}
+:root[data-theme="dark"]{--bg:#0c0f24;--card:#161b3a;--text:#eef0ff;--muted:#9ba3d1;--line:#2a3160;--red:#ff4d5e;--cyan:#5be3ff;--ok:#43d68f;--amber:#ffc24a;--shadow:#00000066}
+*{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--text);font:600 17px/1.5 Nunito,system-ui,sans-serif}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:var(--bg);z-index:10}
+h1,h2,h3{font-family:"Lilita One",Impact,sans-serif;font-weight:400;margin:0;letter-spacing:.01em}
+h1{font-size:clamp(28px,5vw,44px)}h2{font-size:clamp(24px,4vw,34px)}h3{font-size:20px}
+header{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);border-bottom:2px solid var(--line);padding:10px 16px}
+.bar{max-width:1040px;margin:auto;display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between}
+.brand{display:flex;align-items:center;gap:10px}
+.nav{display:flex;flex-wrap:wrap;gap:6px;max-width:1040px;margin:8px auto 0}
+button{font:800 15px Nunito,sans-serif;color:var(--text);background:var(--card);border:2px solid var(--line);border-radius:999px;padding:8px 16px;cursor:pointer}
+button:hover{border-color:var(--cyan)}button:focus-visible,input:focus-visible{outline:3px solid var(--cyan);outline-offset:2px}
+button.on{background:var(--cyan);border-color:var(--cyan);color:#06142a}
+button.red{background:var(--red);border-color:var(--red);color:#fff}
+button:disabled{opacity:.45;cursor:not-allowed}
+.clock{font:400 26px "Lilita One",sans-serif;font-variant-numeric:tabular-nums;min-width:74px;text-align:center}
+main{max-width:1040px;margin:auto;padding:18px 16px 60px;display:grid;gap:16px}
+.card{background:var(--card);border:2px solid var(--line);border-radius:18px;padding:18px 20px;box-shadow:0 4px 0 var(--shadow)}
+.grid{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(210px,1fr))}
+.big{font-size:21px}.muted{color:var(--muted);font-weight:600}
+.tag{display:inline-block;background:var(--cyan);color:#06142a;border-radius:999px;padding:2px 12px;font-weight:800;font-size:14px;margin-bottom:8px}
+.timer{font:400 clamp(64px,14vw,120px)/1 "Lilita One",sans-serif;text-align:center;font-variant-numeric:tabular-nums;margin:6px 0}
+.timer.low{color:var(--red)}
+.row{display:flex;flex-wrap:wrap;gap:8px;justify-content:center}
+.mission{border:2px dashed var(--red);border-radius:14px;padding:12px 16px;background:color-mix(in srgb,var(--red) 8%,transparent)}
+.lesson{border:2px solid var(--ok);border-radius:14px;padding:12px 16px;background:color-mix(in srgb,var(--ok) 8%,transparent)}
+.tbl{width:100%;border-collapse:collapse}.tbl td,.tbl th{padding:8px 6px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+.tbl th{font-weight:800;color:var(--muted);font-size:14px}
+input[type=text]{font:700 18px Nunito,sans-serif;background:var(--bg);color:var(--text);border:2px solid var(--line);border-radius:10px;padding:6px 10px;width:100%;max-width:150px;text-align:center}
+.seats{display:grid;grid-template-columns:repeat(auto-fill,minmax(54px,1fr));gap:8px;margin:8px 0 14px}.seats button{padding:10px 0}
+.ov{position:fixed;inset:0;z-index:50;display:none;align-items:center;justify-content:center;flex-direction:column;gap:16px;padding:24px;text-align:center;background:#080a1ce6;color:#fff}
+.ov.show{display:flex}.ov .t{font:400 clamp(44px,12vw,120px)/1.05 "Lilita One",sans-serif}
+.ord{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-top:8px}
+.ord span{min-width:36px;text-align:center;border:2px solid var(--line);border-radius:10px;padding:2px 6px}
+.ord span.now{background:var(--cyan);color:#06142a;border-color:var(--cyan)}.ord span.done{opacity:.35}
+ul{margin:6px 0 0;padding-left:22px}
+@media (prefers-reduced-motion:no-preference){.ov.show .t{animation:pop .35s ease-out}@keyframes pop{from{transform:scale(.6);opacity:0}to{transform:none;opacity:1}}}
+</style>
+</head>
+<body>
+<header><div class="bar">
+<div class="brand"><svg width="34" height="38" viewBox="0 0 34 38" aria-hidden="true"><rect x="5" y="2" width="22" height="28" rx="11" fill="#e5384a"/><rect x="14" y="9" width="16" height="10" rx="5" fill="#9fe8ff"/><rect x="2" y="14" width="7" height="14" rx="3" fill="#c42a3b"/><rect x="7" y="28" width="7" height="8" rx="3" fill="#c42a3b"/><rect x="18" y="28" width="7" height="8" rx="3" fill="#c42a3b"/></svg><h1 style="font-size:24px">Among Us: AI Edition</h1></div>
+<div class="row" style="align-items:center"><span class="muted">Game clock</span><span class="clock" id="gc">17:00</span><button id="gb" onclick="gtoggle()">Start game</button></div>
+</div><nav class="nav" id="nav"></nav></header>
+<main id="app"></main>
+<div class="ov" id="ov" role="status" aria-live="assertive"><div class="t" id="ovt"></div><div id="ovs" class="big"></div></div>
+<div class="ov" id="md" role="dialog" aria-modal="true"><div id="mdb"></div><button onclick="hideCard()">Hide my card</button></div>
+<script>
+const N=23;
+const RD=[
+{tag:"Round 1 · AI in Sales",c:"Product Recommendations",i:"Virtual Try-On",
+ deb:"Both keywords sit in the consideration stage of the customer journey. Product recommendations are Thinking AI: they analyze customer data to personalize. Virtual try-on helps customers judge a product they cannot touch. Maybelline’s Lipstick Finder combined personalised recommendations with virtual try-on and reported a 63% increase in conversion rate."},
+{tag:"Round 2 · AI in Service",c:"AI Chatbot",i:"AI Copilot",
+ deb:"An AI chatbot is AI-led service: it handles defined, routine requests on its own and escalates when needed. An AI copilot is AI-assisted service: it suggests responses and retrieves information while humans keep decision authority. Routine tasks suit the chatbot, complex or sensitive ones suit the copilot."}];
+const PH=[["Brainstorming",60,"Think about how to describe your keyword without revealing it."],["Keyword description",180,"One short English description each, in the speaking order below. Never say or spell your keyword."],["Discussion & accusation",150,"Question suspicious statements, compare interpretations, defend yourself."],["Voting",30,"Everyone votes for one suspect. The player with the most votes is eliminated."]];
+const RN={C:"Crewmate",I:"Impostor",W:"White Hat"};
+let S;try{S=JSON.parse(localStorage.getItem("auai2"))}catch(e){}
+S=S||{v:"intro",ph:{0:0,1:0},ord:{},ptr:{},sel:{},all:{}};
+const save=()=>{try{localStorage.setItem("auai2",JSON.stringify(S))}catch(e){}};
+const fmt=s=>Math.floor(s/60)+":"+String(s%60).padStart(2,"0");
+function mk(id,sec,end){const o={left:sec,run:false,id:0,paint(){const e=document.getElementById(id);if(e){e.textContent=fmt(o.left);e.classList.toggle("low",o.left<=10&&o.left>0)}},set(s){clearInterval(o.id);o.run=false;o.left=s;o.paint()},go(){if(o.run){clearInterval(o.id);o.run=false;return}if(o.left<=0)return;o.run=true;o.id=setInterval(()=>{o.left--;o.paint();if(o.left<=0){clearInterval(o.id);o.run=false;end&&end();render()}},1000)}};return o}
+const G=mk("gc",1020,()=>flash("Game over!","Time to wrap up"));
+const T=mk("tm",60,()=>flash("Time’s up!","Move to the next phase"));
+function gtoggle(){G.go();document.getElementById("gb").textContent=G.run?"Pause":"Resume"}
+function flash(a,b,ms){document.getElementById("ovt").textContent=a;document.getElementById("ovs").textContent=b||"";const o=document.getElementById("ov");o.classList.add("show");setTimeout(()=>o.classList.remove("show"),ms||1600)}
+function vote(){const o=document.getElementById("ov");o.classList.add("show");document.getElementById("ovs").textContent="Vote for the player you suspect";let n=3;const t=document.getElementById("ovt");t.textContent=n;const i=setInterval(()=>{n--;t.textContent=n>0?n:"VOTE!";if(n<0){clearInterval(i);o.classList.remove("show")}},1000)}
+function mkc(){const a=[0,1,2].map(()=>Math.floor(Math.random()*10));return a.join("")+(a[0]+a[1]+a[2])%10}
+const okc=c=>/^\d{4}$/.test(c)&&(+c[0]+ +c[1]+ +c[2])%10===+c[3];
+function hs(s){let h=5381;for(const ch of s)h=((h<<5)+h+ch.charCodeAt(0))>>>0;return h}
+function rng(a){return()=>{a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+function roles(c,r){const a=[...Array(18).fill("C"),...Array(4).fill("I"),"W"],f=rng(hs(c+"|ai|"+r));for(let i=a.length-1;i>0;i--){const j=Math.floor(f()*(i+1));[a[i],a[j]]=[a[j],a[i]]}return a}
+const kwOf=(r,x)=>x==="C"?RD[r].c:x==="I"?RD[r].i:null;
+try{localStorage.removeItem("auai_host")}catch(e){}
+const HOST=location.hash==="#host"||(()=>{try{return sessionStorage.getItem("auai2_host")==="1"}catch(e){return false}})();
+addEventListener("hashchange",()=>location.reload());
+function hostPin(){const p=prompt("Host PIN");if(p==="nova2026"){try{sessionStorage.setItem("auai2_host","1")}catch(e){}location.reload()}}
+S.code=S.code||[mkc(),mkc()];save();
+const go=v=>{S.v=v;if(typeof v==="number")T.set(PH[S.ph[v]][1]);save();render()};
+function setPh(r,i){S.ph[r]=i;T.set(PH[i][1]);save();render()}
+function newCode(r){if(confirm("A new code reshuffles every role for this round. Continue?")){S.code[r]=mkc();S.sel[r]=0;S.all[r]=0;save();render()}}
+function shuf(r){const a=Array.from({length:N},(_,i)=>i+1),f=Math.random;for(let i=a.length-1;i>0;i--){const j=Math.floor(f()*(i+1));[a[i],a[j]]=[a[j],a[i]]}S.ord[r]=a;S.ptr[r]=0;save();render()}
+function nxt(r){S.ptr[r]=Math.min((S.ptr[r]||0)+1,N);save();render()}
+function pick(r){const v=+document.getElementById("sl"+r).value;if(v>=1&&v<=N){S.sel[r]=v;save();render()}}
+function allr(r){S.all[r]=!S.all[r];save();render()}
+function intro(){return `<div class="card"><span class="tag">23 players · 2 rounds · 17 minutes</span><h2>Who Is the Impostor?</h2><p class="big">A social deduction game about AI in Sales & Service. Everyone secretly gets a keyword (or nothing at all) and describes it in English without naming it. Find the players who got a different keyword.</p></div>
+<div class="card"><h3>Secret roles</h3><table class="tbl"><tbody><tr><td><b>Crewmates (18)</b></td><td>Same keyword. Describe it without revealing the exact term.</td></tr><tr><td><b>Impostors (4)</b></td><td>A different but related keyword. Describe it and blend in.</td></tr><tr><td><b>White Hat (1)</b></td><td>No keyword and no special powers. Listen carefully and improvise.</td></tr></tbody></table><p class="muted">Players never see their role name, only their keyword (or “no keyword”).</p></div>
+<div class="card"><h3>How players join</h3><ul><li>Hand every student a <b>seat number from 1 to 23</b> (numbered slips or seat labels). Each number is used once.</li><li>Players open the player link (without #host), pick the round, their seat number and the <b>4-digit round code</b> shown on the Round screen.</li><li>The card is locked on that phone after the first look. Keep your screen hidden.</li></ul></div>
+<div class="card"><h3>Each round</h3><table class="tbl"><tbody>${PH.map(p=>`<tr><td><b>${p[0]}</b></td><td>${fmt(p[1])}</td><td class="muted">${p[2]}</td></tr>`).join("")}</tbody></table>
+<p><b>Rules:</b> one short English description each. Describe your own keyword only. Never say, spell or show your keyword or role.</p><p class="muted">Timeline: intro 3:00, then two rounds of 7:00 (17:00 total).</p></div>
+<div class="row"><button class="on" onclick="go(0)">Start Round 1</button></div>`}
+function round(r){const R=RD[r],p=S.ph[r],P=PH[p],o=S.ord[r],q=S.ptr[r]||0,sel=S.sel[r],ro=sel?roles(S.code[r],r)[sel-1]:null;
+let ord="";if(p===1)ord=`<div class="card"><h3>Speaking order</h3><p class="muted">Random order of seat numbers. Call the next seat when the speaker finishes.</p>${o?`<p class="big" style="text-align:center">Now: <b>${q<N?"Seat "+o[q]:"everyone has spoken"}</b>${q+1<N?" · Next: Seat "+o[q+1]:""}</p><div class="ord">${o.map((s,i)=>`<span class="${i<q?"done":i===q?"now":""}">${s}</span>`).join("")}</div>`:""}<div class="row" style="margin-top:10px"><button class="on" onclick="shuf(${r})">${o?"Reshuffle order":"Shuffle speaking order"}</button>${o?`<button onclick="nxt(${r})">Next speaker</button>`:""}</div></div>`;
+let res="";if(ro){const kw=kwOf(r,ro);res=`<div class="${ro==="I"?"lesson":"mission"}"><b>Seat ${sel} was the ${RN[ro]}.</b><br>${kw?"Keyword: "+kw+".":"This player had no keyword."}<br>${ro==="I"?"The group caught an Impostor.":ro==="W"?"The group caught the White Hat.":"A Crewmate was eliminated. The Impostors are still hidden."}</div>`}
+let al="";if(S.all[r]){const rs=roles(S.code[r],r),L=x=>rs.map((y,i)=>y===x?i+1:0).filter(Boolean).join(", ");al=`<div class="mission"><b>All roles:</b><br>Impostors (${R.i}): seats ${L("I")}<br>White Hat: seat ${L("W")}<br>All other seats are Crewmates (${R.c}).</div>`}
+return `<div class="card"><span class="tag">${R.tag}</span><h2>Who Is the Impostor?</h2><p class="muted">Players open the player link, pick their seat number (1–${N}) and type this code:</p><div class="timer" style="font-size:clamp(48px,10vw,84px);letter-spacing:.12em">${S.code[r]}</div><div class="row"><button onclick="newCode(${r})">New code</button></div></div>
+<div class="card"><div class="row" style="margin-bottom:8px">${PH.map((x,i)=>`<button class="${p===i?"on":""}" onclick="setPh(${r},${i})">${i+1}. ${x[0]}</button>`).join("")}</div><h3 style="text-align:center">${P[0]}</h3><p class="muted" style="text-align:center">${P[2]}</p><div class="timer" id="tm">${fmt(T.left)}</div><div class="row"><button class="on" onclick="T.go();render()">${T.run?"Pause":"Start"}</button><button onclick="T.set(${P[1]});render()">Reset ${fmt(P[1])}</button>${p===3?`<button class="red" onclick="vote()">Call the vote</button>`:""}${p<3?`<button onclick="setPh(${r},${p+1})">Next phase</button>`:""}</div></div>${ord}
+<div class="card"><h3>After the vote: reveal</h3><p class="muted">Enter the seat number of the player with the most votes.</p><div class="row" style="margin:8px 0"><input type="text" id="sl${r}" inputmode="numeric" maxlength="2" aria-label="Eliminated seat number" value="${sel||""}"><button class="red" onclick="pick(${r})">Reveal this player</button><button onclick="allr(${r})">${S.all[r]?"Hide all roles":"Reveal all roles"}</button></div>${res}${al}</div>
+${sel||S.all[r]?`<div class="lesson"><b>Debrief</b><br>${R.deb}</div>`:""}
+<div class="row"><button class="on" onclick="go(${r?"'end'":1})">${r?"Wrap-up":"Next: Round 2"}</button></div>`}
+function end(){return `<div class="card"><span class="tag">Wrap-up</span><h2>Think critically. Describe carefully. Find the Impostor!</h2><ul class="big"><li>Similar-sounding AI tools can serve very different purposes. Recommendations and virtual try-on both support the consideration stage, but work differently.</li><li>AI-led service (chatbot) handles routine requests alone. AI-assisted service (copilot) supports human agents, who keep decision authority.</li><li>Choosing the right AI for the right task matters as much as knowing what AI can do.</li></ul></div><div class="row"><button onclick="go('intro')">Back to intro</button><button onclick="if(confirm('Reset codes and notes?')){S={v:'intro',ph:{0:0,1:0},ord:{},ptr:{},sel:{},all:{},code:[mkc(),mkc()]};save();render()}">Reset game</button></div>`}
+let P={r:0,seat:null,c:"",msg:""};
+function lockGet(){try{return JSON.parse(localStorage.getItem("auai2_p"+P.r))}catch(e){return null}}
+function showMine(){const L=lockGet();const c=L?L.c:(document.getElementById("pc").value||"").trim();P.c=c;if(!L&&P.seat==null){P.msg="Pick your seat number first.";return render()}if(!L&&!okc(c)){P.msg="That code doesn’t look right. Check the screen and try again.";return render()}P.msg="";const s=L?L.s:P.seat;if(!L){try{localStorage.setItem("auai2_p"+P.r,JSON.stringify({s,c}))}catch(e){}}const x=roles(c,P.r)[s-1],kw=kwOf(P.r,x);document.getElementById("mdb").innerHTML=kw?`<p class="muted" style="color:#9ba3d1">${RD[P.r].tag}</p><div class="t">${kw}</div><p class="big" style="max-width:640px">Describe it in one short English sentence without saying its name.</p><p>Do not show your screen.</p>`:`<p class="muted" style="color:#9ba3d1">${RD[P.r].tag}</p><div class="t">No keyword</div><p class="big" style="max-width:640px">Listen carefully to the others and improvise a description that fits in.</p><p>Do not show your screen.</p>`;document.getElementById("md").classList.add("show")}
+function hideCard(){document.getElementById("md").classList.remove("show");render()}
+function playerView(){document.querySelector("header").style.display="none";const L=lockGet();if(L)P.seat=L.s;
+document.getElementById("app").innerHTML=`<div class="card"><span class="tag">Secret card</span><h2>Among Us: AI Edition</h2><p class="muted">Pick the round and your seat number, then type the code from the screen. Keep your phone hidden.</p></div>
+<div class="card"><h3>Round</h3><div class="row" style="justify-content:flex-start;margin:8px 0 14px">${[0,1].map(r=>`<button class="${P.r===r?"on":""}" onclick="P.r=${r};P.msg='';render()">Round ${r+1}</button>`).join("")}</div>
+<h3>Your seat number</h3><div class="seats">${Array.from({length:N},(_,i)=>`<button ${L?"disabled":""} class="${P.seat===i+1?"on":""}" onclick="P.seat=${i+1};render()">${i+1}</button>`).join("")}</div>
+${L?`<p class="muted">Your card for this round is locked in on this phone.</p>`:`<h3>Round code</h3><p><input type="text" id="pc" inputmode="numeric" maxlength="4" aria-label="Round code" value="${P.c}" style="font-size:26px;max-width:140px"></p>`}
+${P.msg?`<p style="color:var(--red)">${P.msg}</p>`:""}<button class="red" onclick="showMine()">${L?"Show my card again":"Show my card"}</button></div><p style="text-align:center"><button class="tog" style="padding:4px 12px;font-size:14px" onclick="hostPin()">Host</button></p>`}
+function render(){if(!HOST)return playerView();document.querySelector("header").style.display="";const V=[["intro","Intro"],[0,"Round 1"],[1,"Round 2"],["end","Wrap-up"]];
+document.getElementById("nav").innerHTML=V.map(v=>`<button class="${S.v===v[0]?"on":""}" onclick="go(${typeof v[0]==="number"?v[0]:"'"+v[0]+"'"})">${v[1]}</button>`).join("");
+const v=S.v;document.getElementById("app").innerHTML=v==="intro"?intro():v==="end"?end():round(v);T.paint();G.paint()}
+if(typeof S.v==="number")T.set(PH[S.ph[S.v]][1]);
+render();
+</script>
+</body>
+</html>
